@@ -5,22 +5,21 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
-class Category(MPTTModel):
+class Category(models.Model):
     name = models.CharField(
         verbose_name=_("Category Name"),
         help_text=("Required and Unique"),
         max_length=255,
-        default="test",
-        null=True
+        blank=True
     )
 
     #slug is a addressable url string 
     slug = models.SlugField(verbose_name=_("Category safe URL"), max_length=255 , unique=True)
-    parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     is_active = models.BooleanField(default=True)
 
-    class MPTTMeta:
-        order_insertion_by = ["name"]
+    # class MPTTMeta:
+    #     order_insertion_by = ["name"]
 
     class Meta:
         verbose_name = _("Category")
@@ -78,7 +77,7 @@ class Product(models.Model):
         help_text=("Change product visibility"),
         default=True,
     )
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True, editable=False)
+
     
     class Meta:
         verbose_name = _("product")
@@ -118,7 +117,7 @@ class productImage(models.Model):
 
     is_feature = models.BooleanField(default = False)
     created_at = models.DateField(auto_now_add=True, editable=False)
-
+    
     class Meta:
         verbose_name = _("Product Image")
         verbose_name_plural = _("Product Images")
